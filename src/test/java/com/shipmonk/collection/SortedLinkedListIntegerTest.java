@@ -234,6 +234,88 @@ class SortedLinkedListIntegerTest {
             assertEquals(0, list.removeAll(5));
             assertEquals(List.of(1, 10), list.toList());
         }
+
+        @Test
+        @DisplayName("removeAt() removes element at specified index")
+        void removeAt_removesAtIndex() {
+            list.add(1);
+            list.add(2);
+            list.add(3);
+            list.add(4);
+            list.add(5);
+
+            Integer removed = list.removeAt(2);
+
+            assertEquals(3, removed);
+            assertEquals(4, list.size());
+            assertEquals(List.of(1, 2, 4, 5), list.toList());
+        }
+
+        @Test
+        @DisplayName("removeAt() removes head element (index 0)")
+        void removeAt_removesHead() {
+            list.add(1);
+            list.add(2);
+            list.add(3);
+
+            Integer removed = list.removeAt(0);
+
+            assertEquals(1, removed);
+            assertEquals(2, list.first().orElseThrow());
+            assertEquals(List.of(2, 3), list.toList());
+        }
+
+        @Test
+        @DisplayName("removeAt() removes tail element (last index)")
+        void removeAt_removesTail() {
+            list.add(1);
+            list.add(2);
+            list.add(3);
+
+            Integer removed = list.removeAt(2);
+
+            assertEquals(3, removed);
+            assertEquals(2, list.last().orElseThrow());
+            assertEquals(List.of(1, 2), list.toList());
+        }
+
+        @Test
+        @DisplayName("removeAt() works on single element list")
+        void removeAt_worksOnSingleElement() {
+            list.add(42);
+
+            Integer removed = list.removeAt(0);
+
+            assertEquals(42, removed);
+            assertTrue(list.isEmpty());
+        }
+
+        @Test
+        @DisplayName("removeAt() throws IndexOutOfBoundsException for invalid index")
+        void removeAt_throwsForInvalidIndex() {
+            list.add(1);
+            list.add(2);
+
+            assertThrows(IndexOutOfBoundsException.class, () -> list.removeAt(-1));
+            assertThrows(IndexOutOfBoundsException.class, () -> list.removeAt(2));
+            assertThrows(IndexOutOfBoundsException.class, () -> list.removeAt(100));
+        }
+
+        @Test
+        @DisplayName("removeAt() works correctly for indices in second half")
+        void removeAt_worksForSecondHalf() {
+            // Add 10 elements
+            for (int i = 1; i <= 10; i++) {
+                list.add(i);
+            }
+
+            // Remove from second half (index 7 = value 8)
+            Integer removed = list.removeAt(7);
+
+            assertEquals(8, removed);
+            assertEquals(9, list.size());
+            assertFalse(list.contains(8));
+        }
     }
 
     @Nested
@@ -285,6 +367,50 @@ class SortedLinkedListIntegerTest {
             assertThrows(IndexOutOfBoundsException.class, () -> list.get(-1));
             assertThrows(IndexOutOfBoundsException.class, () -> list.get(1));
             assertThrows(IndexOutOfBoundsException.class, () -> list.get(100));
+        }
+
+        @Test
+        @DisplayName("get() works correctly for indices in first half (traverses from head)")
+        void get_worksForFirstHalf() {
+            // Add 10 elements
+            for (int i = 1; i <= 10; i++) {
+                list.add(i);
+            }
+
+            // Access indices 0-4 (first half)
+            assertEquals(1, list.get(0));
+            assertEquals(2, list.get(1));
+            assertEquals(3, list.get(2));
+            assertEquals(4, list.get(3));
+            assertEquals(5, list.get(4));
+        }
+
+        @Test
+        @DisplayName("get() works correctly for indices in second half (traverses from tail)")
+        void get_worksForSecondHalf() {
+            // Add 10 elements
+            for (int i = 1; i <= 10; i++) {
+                list.add(i);
+            }
+
+            // Access indices 5-9 (second half)
+            assertEquals(6, list.get(5));
+            assertEquals(7, list.get(6));
+            assertEquals(8, list.get(7));
+            assertEquals(9, list.get(8));
+            assertEquals(10, list.get(9));
+        }
+
+        @Test
+        @DisplayName("get() works correctly at boundary (middle index)")
+        void get_worksAtMiddle() {
+            // Add 11 elements (odd count)
+            for (int i = 1; i <= 11; i++) {
+                list.add(i);
+            }
+
+            // Middle element (index 5 for size 11)
+            assertEquals(6, list.get(5));
         }
 
         @Test

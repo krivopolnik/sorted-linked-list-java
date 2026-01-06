@@ -42,8 +42,9 @@ import java.util.stream.StreamSupport;
  * <ul>
  *   <li>add(T): O(n)</li>
  *   <li>remove(T): O(n)</li>
+ *   <li>removeAt(int): O(n) - optimized to traverse from nearest end</li>
  *   <li>contains(T): O(n)</li>
- *   <li>get(int): O(n)</li>
+ *   <li>get(int): O(n) - optimized to traverse from nearest end</li>
  *   <li>first()/last(): O(1)</li>
  *   <li>size()/isEmpty(): O(1)</li>
  * </ul>
@@ -206,6 +207,21 @@ public final class SortedLinkedList<T extends Comparable<T>> implements Iterable
     }
 
     /**
+     * Removes and returns the element at the specified index.
+     *
+     * @param index the index of the element to remove (0-based)
+     * @return the element that was removed
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    public T removeAt(int index) {
+        checkIndex(index);
+        Node<T> node = getNodeAt(index);
+        T value = node.getValue();
+        removeNode(node);
+        return value;
+    }
+
+    /**
      * Internal helper method to remove a node from the list.
      *
      * @param node the node to remove
@@ -254,6 +270,11 @@ public final class SortedLinkedList<T extends Comparable<T>> implements Iterable
 
     /**
      * Returns the element at the specified index.
+     * <p>
+     * This method is optimized to traverse from the nearest end of the list.
+     * If the index is in the first half, traversal starts from the head.
+     * If the index is in the second half, traversal starts from the tail.
+     * </p>
      *
      * @param index the index of the element to return (0-based)
      * @return the element at the specified index
@@ -261,12 +282,31 @@ public final class SortedLinkedList<T extends Comparable<T>> implements Iterable
      */
     public T get(int index) {
         checkIndex(index);
+        return getNodeAt(index).getValue();
+    }
 
-        Node<T> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.getNext();
+    /**
+     * Returns the node at the specified index, traversing from the nearest end.
+     *
+     * @param index the index of the node to return
+     * @return the node at the specified index
+     */
+    private Node<T> getNodeAt(int index) {
+        Node<T> current;
+        if (index < size / 2) {
+            // Traverse from head
+            current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.getNext();
+            }
+        } else {
+            // Traverse from tail
+            current = tail;
+            for (int i = size - 1; i > index; i--) {
+                current = current.getPrev();
+            }
         }
-        return current.getValue();
+        return current;
     }
 
     /**

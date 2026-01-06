@@ -121,11 +121,14 @@ List<Integer> arrayList = list.toList();
 |--------|------------|-------------|
 | `add(T value)` | O(n) | Insert value maintaining sorted order |
 | `remove(T value)` | O(n) | Remove first occurrence, returns boolean |
+| `removeAt(int index)` | O(n)* | Remove element at index, returns removed value |
 | `removeAll(T value)` | O(n) | Remove all occurrences, returns count |
 | `contains(T value)` | O(n) | Check if value exists |
-| `get(int index)` | O(n) | Get element by index |
+| `get(int index)` | O(n)* | Get element by index |
 | `indexOf(T value)` | O(n) | Get index of first occurrence |
 | `count(T value)` | O(n) | Count occurrences of value |
+
+*\* Optimized to traverse from the nearest end (head or tail)*
 
 ### Query Operations
 
